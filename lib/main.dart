@@ -13,7 +13,8 @@ List<Hole> globalHoles = List.generate(18, (i) => Hole(
   i + 1,
   4,
   0
-));
+  )
+);
 
 void main() => runApp(new EighteenHolesApp());
 
@@ -23,14 +24,6 @@ class EighteenHolesApp extends StatefulWidget {
 }
 
 class _EighteenHolesAppState extends State<EighteenHolesApp> {
-  static List<Hole> holes = List.generate(
-    18,
-    (i) => Hole(
-      i + 1,
-      4,
-      0
-    )
-  );
 
   HolesScreen holesScreen;
   
@@ -65,7 +58,8 @@ class HolesScreen extends StatelessWidget {
 						// When a user taps on the ListTile, navigate to the DetailScreen.
 						// Notice that we're not only creating a DetailScreen, we're
 						// also passing the current hole through to it!
-						onTap: () {
+						trailing: StrokesParTrailer(index),
+            onTap: () {
 							Navigator.push(
 								context,
 								MaterialPageRoute(
@@ -105,6 +99,30 @@ class DetailScreen extends StatelessWidget {
   }
 }
 
+class StrokesParTrailer extends StatefulWidget{
+  final int index;
+
+  StrokesParTrailer(this.index);
+
+  @override
+  _StrokesParTrailerState createState() => _StrokesParTrailerState(index);
+}
+
+class _StrokesParTrailerState extends State<StrokesParTrailer> {
+  final int index;
+  int strokes;
+  int par;
+
+  _StrokesParTrailerState(this.index) {
+    strokes = globalHoles[index].strokes;
+    par = globalHoles[index].par;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Text('${globalHoles[index].strokes} / ${globalHoles[index].par}');
+  }
+}
 
 class NumberIncrementDecrementRow extends StatefulWidget {
   final int index;
@@ -120,8 +138,7 @@ class _NumberIncrementDecrementRowState extends State<NumberIncrementDecrementRo
   int strokes;
   int par;
 
-  //TODO: Handle par
-  void decrement() {
+  void decrementStrokes() {
     if (strokes > 1) {
       setState(() {
         this.strokes--;
@@ -130,11 +147,27 @@ class _NumberIncrementDecrementRowState extends State<NumberIncrementDecrementRo
     }
   }
 
-  void increment() {
+  void incrementStrokes() {
     setState(() {
       this.strokes++;
     });
     globalHoles[index].strokes++;
+  }
+
+  void decrementPar() {
+    if (par > 1) {
+      setState(() {
+        this.par--;
+      });
+      globalHoles[index].par--;
+    }
+  }
+
+  void incrementPar() {
+    setState(() {
+      this.par++;
+    });
+    globalHoles[index].par++;
   }
 
   _NumberIncrementDecrementRowState(this.index){
@@ -144,18 +177,37 @@ class _NumberIncrementDecrementRowState extends State<NumberIncrementDecrementRo
 
   @override
   Widget build(BuildContext context) {
-    return new Row(
+    return new Column(
       children: <Widget>[
-        new RaisedButton(
-          onPressed: decrement,
-          child: Text('-'),
+        new Row(
+          children: <Widget>[
+            new Text('Strokes'),
+            new RaisedButton(
+              onPressed: decrementStrokes,
+              child: Text('-'),
+            ),
+            new Text('$strokes'),
+            new RaisedButton(
+              onPressed: incrementStrokes,
+              child: Text('+'),
+            ),
+          ],
         ),
-        new Text('$strokes'),
-        new RaisedButton(
-          onPressed: increment,
-          child: Text('+'),
+        new Row(
+          children: <Widget>[
+            new Text('Par'),
+            new RaisedButton(
+              onPressed: decrementPar,
+              child: Text('-'),
+            ),
+            new Text('$par'),
+            new RaisedButton(
+              onPressed: incrementPar,
+              child: Text('+'),
+            ),
+          ],
         ),
-      ],
+      ]
     );
   }
 }
